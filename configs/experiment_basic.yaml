@@ -26,9 +26,9 @@ tasks:
       n_features: 2
     missingness:
       pattern: "point"
-      rate: 0.4
+      rate: 0.1
 
-    models_to_run: ["SAITS", "Transformer", "TimeLLM", "BRITS", "SegRNN", "MyLSTM"] 
+    models_to_run: ["SAITS", "Transformer", "TimeLLM", "BRITS", "SegRNN", "MyLSTM", "CSAI"] 
 
     evaluation:
       metrics: ["mae", "mse", "mre"]
@@ -67,16 +67,16 @@ model_definitions:
       d_k: 32
       d_v: 32
       dropout: 0.1
-      epochs: 10
-      patience: 5
+      epochs: 50
+      patience: 10
 
   - name: "BRITS"
     type: "pypots"
     class_name: "BRITS"
     hyperparameters:
       rnn_hidden_size: 64
-      epochs: 10
-      patience: 5
+      epochs: 50
+      patience: 10
 
   # ----------------- Transformer -----------------
   - name: "Transformer"
@@ -94,8 +94,8 @@ model_definitions:
       ORT_weight: 1               # ORT损失权重
       MIT_weight: 1               # MIT损失权重
       batch_size: 32
-      epochs: 5
-      patience: 1 #要比epochs小
+      epochs: 50
+      patience: 10 #要比epochs小
 
   # ----------------- TEFN -----------------
   - name: "TEFN"
@@ -181,8 +181,8 @@ model_definitions:
       ORT_weight: 1
       MIT_weight: 1
       batch_size: 32
-      epochs: 5
-      patience: 1
+      epochs: 50
+      patience: 10
 
   # ----------------- GPT4TS -----------------
   - name: "GPT4TS"
