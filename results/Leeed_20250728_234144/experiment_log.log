@@ -1,0 +1,134 @@
+2025-07-28 23:41:44,436 - INFO - Starting experiment: Leeed
+2025-07-28 23:41:44,437 - INFO - Trainable models will be saved to and loaded from: saved_models\Leeed
+2025-07-28 23:41:44,437 - INFO - Step 1: Loading and preprocessing data...
+2025-07-28 23:41:44,449 - INFO - Final data parameters for model initialization: n_steps=100, n_features=2
+2025-07-28 23:41:44,449 - INFO - Step 2: Creating missing values in the test set...
+2025-07-28 23:41:44,450 - INFO - --- Processing model: SAITS ---
+2025-07-28 23:41:44,689 - INFO - Found existing model file. Loading from: saved_models\Leeed\SAITS.pth
+2025-07-28 23:41:44,706 - INFO - Model 'SAITS' loaded successfully.
+2025-07-28 23:41:44,706 - INFO - Imputing with SAITS...
+2025-07-28 23:41:45,050 - INFO - SAITS imputation finished in 0.34 seconds.
+2025-07-28 23:41:45,050 - INFO - Reverting data to original scale for evaluation and plotting...
+2025-07-28 23:41:45,054 - INFO - Evaluating SAITS on original-scale data...
+2025-07-28 23:41:45,056 - INFO - Metrics for SAITS: {'mae': 0.7458721878231928, 'mse': 1.5167194011705762, 'mre': 0.04106249078020436, 'model': 'SAITS', 'fit_time_sec': 0, 'impute_time_sec': 0.34416937828063965}
+2025-07-28 23:41:45,062 - INFO - Updated metrics summary file with results for SAITS.
+2025-07-28 23:41:45,062 - INFO - Generating multi-feature plot for SAITS on original-scale data...
+2025-07-28 23:41:45,886 - INFO - --- Processing model: Transformer ---
+2025-07-28 23:41:45,905 - INFO - Found existing model file. Loading from: saved_models\Leeed\Transformer.pth
+2025-07-28 23:41:45,926 - INFO - Model 'Transformer' loaded successfully.
+2025-07-28 23:41:45,926 - INFO - Imputing with Transformer...
+2025-07-28 23:41:45,959 - INFO - Transformer imputation finished in 0.03 seconds.
+2025-07-28 23:41:45,959 - INFO - Reverting data to original scale for evaluation and plotting...
+2025-07-28 23:41:45,963 - INFO - Evaluating Transformer on original-scale data...
+2025-07-28 23:41:45,964 - INFO - Metrics for Transformer: {'mae': 0.7232010540371523, 'mse': 1.3404167083115155, 'mre': 0.039814377179423814, 'model': 'Transformer', 'fit_time_sec': 0, 'impute_time_sec': 0.03229331970214844}
+2025-07-28 23:41:45,967 - INFO - Updated metrics summary file with results for Transformer.
+2025-07-28 23:41:45,969 - INFO - Generating multi-feature plot for Transformer on original-scale data...
+2025-07-28 23:41:46,313 - INFO - --- Processing model: TimeLLM ---
+2025-07-28 23:42:01,661 - ERROR - An error occurred while processing model 'TimeLLM'. Skipping to the next one.
+urllib3.exceptions.SSLError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\urllib3\connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /api/models/openai-community/gpt2/tree/main/additional_chat_templates?recursive=False&expand=False (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\vscode\manim\math\Multi-Model Interpolation Comparator\core\experiment_runner.py", line 144, in run
+    model = self._get_model(model_config)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\vscode\manim\math\Multi-Model Interpolation Comparator\core\experiment_runner.py", line 59, in _get_model
+    return PyPOTSWrapper(model_config['class_name'], hyperparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\vscode\manim\math\Multi-Model Interpolation Comparator\models\pypots_wrappers.py", line 17, in __init__
+    self.model = model_class(**hyperparameters)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\21992\AppData\Roaming\Python\Python312\site-packages\pypots\imputation\timellm\model.py", line 185, in __init__
+    self.model = _TimeLLM(
+                 ^^^^^^^^^
+  File "C:\Users\21992\AppData\Roaming\Python\Python312\site-packages\pypots\imputation\timellm\core.py", line 39, in __init__
+    self.backbone = BackboneTimeLLM(
+                    ^^^^^^^^^^^^^^^^
+  File "C:\Users\21992\AppData\Roaming\Python\Python312\site-packages\pypots\nn\modules\timellm\backbone.py", line 90, in __init__
+    self.tokenizer = GPT2Tokenizer.from_pretrained("openai-community/gpt2")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\21992\AppData\Roaming\Python\Python312\site-packages\transformers\tokenization_utils_base.py", line 1956, in from_pretrained
+    for template in list_repo_templates(
+                    ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\21992\AppData\Roaming\Python\Python312\site-packages\transformers\utils\hub.py", line 169, in list_repo_templates
+    for entry in list_repo_tree(
+                 ^^^^^^^^^^^^^^^
+  File "C:\Users\21992\AppData\Roaming\Python\Python312\site-packages\huggingface_hub\hf_api.py", line 3171, in list_repo_tree
+    for path_info in paginate(path=tree_url, headers=headers, params={"recursive": recursive, "expand": expand}):
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\21992\AppData\Roaming\Python\Python312\site-packages\huggingface_hub\utils\_pagination.py", line 36, in paginate
+    r = session.get(path, params=params, headers=headers)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\requests\sessions.py", line 602, in get
+    return self.request("GET", url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\21992\AppData\Roaming\Python\Python312\site-packages\huggingface_hub\utils\_http.py", line 96, in send
+    return super().send(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\requests\adapters.py", line 698, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: (MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /api/models/openai-community/gpt2/tree/main/additional_chat_templates?recursive=False&expand=False (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))"), '(Request ID: 5a81c19d-2abb-453d-916d-b5db48aca0da)')
+2025-07-28 23:42:01,674 - INFO - --- Processing model: BRITS ---
+2025-07-28 23:42:01,686 - INFO - Found existing model file. Loading from: saved_models\Leeed\BRITS.pth
+2025-07-28 23:42:01,701 - INFO - Model 'BRITS' loaded successfully.
+2025-07-28 23:42:01,701 - INFO - Imputing with BRITS...
+2025-07-28 23:42:05,039 - INFO - BRITS imputation finished in 3.34 seconds.
+2025-07-28 23:42:05,040 - INFO - Reverting data to original scale for evaluation and plotting...
+2025-07-28 23:42:05,043 - INFO - Evaluating BRITS on original-scale data...
+2025-07-28 23:42:05,044 - INFO - Metrics for BRITS: {'mae': 0.36992484332810194, 'mse': 0.26557293505900553, 'mre': 0.020365467055234253, 'model': 'BRITS', 'fit_time_sec': 0, 'impute_time_sec': 3.337791681289673}
+2025-07-28 23:42:05,046 - INFO - Updated metrics summary file with results for BRITS.
+2025-07-28 23:42:05,046 - INFO - Generating multi-feature plot for BRITS on original-scale data...
+2025-07-28 23:42:05,268 - INFO - --- Processing model: SegRNN ---
+2025-07-28 23:42:05,288 - INFO - Found existing model file. Loading from: saved_models\Leeed\SegRNN.pth
+2025-07-28 23:42:05,293 - INFO - Model 'SegRNN' loaded successfully.
+2025-07-28 23:42:05,293 - INFO - Imputing with SegRNN...
+2025-07-28 23:42:05,360 - INFO - SegRNN imputation finished in 0.07 seconds.
+2025-07-28 23:42:05,360 - INFO - Reverting data to original scale for evaluation and plotting...
+2025-07-28 23:42:05,363 - INFO - Evaluating SegRNN on original-scale data...
+2025-07-28 23:42:05,365 - INFO - Metrics for SegRNN: {'mae': 1.460621701142946, 'mse': 3.5111366495243614, 'mre': 0.08041158541061727, 'model': 'SegRNN', 'fit_time_sec': 0, 'impute_time_sec': 0.06680917739868164}
+2025-07-28 23:42:05,368 - INFO - Updated metrics summary file with results for SegRNN.
+2025-07-28 23:42:05,368 - INFO - Generating multi-feature plot for SegRNN on original-scale data...
+2025-07-28 23:42:05,594 - INFO - --- Processing model: MyLSTM ---
+2025-07-28 23:42:05,597 - INFO - Found existing model file. Loading from: saved_models\Leeed\MyLSTM.pth
+2025-07-28 23:42:05,601 - INFO - Model 'MyLSTM' loaded successfully.
+2025-07-28 23:42:05,601 - INFO - Imputing with MyLSTM...
+2025-07-28 23:42:05,625 - INFO - MyLSTM imputation finished in 0.02 seconds.
+2025-07-28 23:42:05,625 - INFO - Reverting data to original scale for evaluation and plotting...
+2025-07-28 23:42:05,630 - INFO - Evaluating MyLSTM on original-scale data...
+2025-07-28 23:42:05,632 - INFO - Metrics for MyLSTM: {'mae': 1.4000121762304953, 'mse': 3.0875930394464786, 'mre': 0.07707485011127126, 'model': 'MyLSTM', 'fit_time_sec': 0, 'impute_time_sec': 0.0244290828704834}
+2025-07-28 23:42:05,634 - INFO - Updated metrics summary file with results for MyLSTM.
+2025-07-28 23:42:05,634 - INFO - Generating multi-feature plot for MyLSTM on original-scale data...
+2025-07-28 23:42:05,868 - INFO - --- All models processed. Finalizing results. ---
+2025-07-28 23:42:05,868 - INFO - Full hyperparameters for this run saved to: results\Leeed_20250728_234144\run_hyperparameters.json
+2025-07-28 23:42:05,868 - INFO - Final metrics summary:
+2025-07-28 23:42:05,872 - INFO - 
+        mae       mse       mre        model  fit_time_sec  impute_time_sec
+0  0.745872  1.516719  0.041062        SAITS             0         0.344169
+1  0.723201  1.340417  0.039814  Transformer             0         0.032293
+2  0.369925  0.265573  0.020365        BRITS             0         3.337792
+3  1.460622  3.511137  0.080412       SegRNN             0         0.066809
+4  1.400012  3.087593  0.077075       MyLSTM             0         0.024429
+2025-07-28 23:42:06,162 - INFO - Metrics comparison plot saved.
+2025-07-28 23:42:06,327 - INFO - Combined plot saved.
+2025-07-28 23:42:06,327 - INFO - Experiment finished.

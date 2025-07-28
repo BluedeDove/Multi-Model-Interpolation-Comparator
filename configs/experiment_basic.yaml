@@ -1,0 +1,251 @@
+# ===================================================================
+# PyPOTS 全模型库配置文件 (根据官方文档整理)
+# ===================================================================
+
+# 实验批次配置
+batch_name: "PyPOTS_Full_Imputation_Showcase"
+
+# 全局设置 (可被单个任务覆盖)
+global_settings:
+  random_seed: 2025
+  device: "cuda:0" # 推荐使用 GPU, 'cpu' or 'cuda:0' etc.
+
+# 任务列表 (程序将按顺序执行以下所有任务)
+tasks:
+  - experiment_name: "Leeed"
+    settings:
+      random_seed: 2025
+      device: "cuda:0"
+      load_if_exists: true # <-- 新增：设置为true来启用加载功能
+    data:
+      path: "data/masked_data.csv"
+      datetime_column: null      # 如果有时间列，请指定列名
+      feature_columns: ["original"]      # 留空以使用所有列
+      test_size: 0.2
+      n_steps: 100
+      n_features: 2
+    missingness:
+      pattern: "point"
+      rate: 0.4
+
+    models_to_run: ["SAITS", "Transformer", "TimeLLM", "BRITS", "SegRNN", "MyLSTM"] 
+
+    evaluation:
+      metrics: ["mae", "mse", "mre"]
+      plot_annotation: ["n_layers", "d_model", "lr"]
+      # ⬇️ ========== 新增：图表显示设置 ========== ⬇️
+      plot_settings:
+        x_label: "Time Step (Hours)"
+        y_label: "Temp"
+        y_unit: "degree"
+      # ⬆️ ======================================== ⬆️
+
+# =======================================================
+# 模型定义库 (Model Definition Library)
+# =======================================================
+model_definitions:
+
+  # ----------------- 自定义模型 -----------------
+  - name: "MyLSTM"
+    type: "custom"
+    class_name: "MyLSTMImputer"
+    hyperparameters:
+      hidden_dim: 64
+      n_layers: 2
+      lr: 0.001
+      epochs: 50 # 增加 epochs 以便更好地学习
+
+  # ----------------- SAITS -----------------
+  - name: "SAITS"
+    type: "pypots"
+    class_name: "SAITS"
+    hyperparameters:
+      n_layers: 2
+      d_model: 64
+      d_ffn: 128
+      n_heads: 2
+      d_k: 32
+      d_v: 32
+      dropout: 0.1
+      epochs: 10
+      patience: 5
+
+  - name: "BRITS"
+    type: "pypots"
+    class_name: "BRITS"
+    hyperparameters:
+      rnn_hidden_size: 64
+      epochs: 10
+      patience: 5
+
+  # ----------------- Transformer -----------------
+  - name: "Transformer"
+    type: "pypots"
+    class_name: "Transformer"
+    hyperparameters:
+      n_layers: 3                 # Transformer层数
+      d_model: 256                # 模型骨干维度
+      n_heads: 8                  # 多头注意力头数
+      d_k: 32                     # d_model / n_heads
+      d_v: 32                     # d_model / n_heads
+      d_ffn: 512                  # 前馈网络维度
+      dropout: 0.1                # 全连接层dropout率
+      attn_dropout: 0.1           # 注意力层dropout率
+      ORT_weight: 1               # ORT损失权重
+      MIT_weight: 1               # MIT损失权重
+      batch_size: 32
+      epochs: 5
+      patience: 1 #要比epochs小
+
+  # ----------------- TEFN -----------------
+  - name: "TEFN"
+    type: "pypots"
+    class_name: "TEFN"
+    hyperparameters:
+      n_fod: 2                      # FOD (frame of discernment) 数量
+      apply_nonstationary_norm: true # 是否应用非平稳归一化
+      ORT_weight: 1                 # ORT损失权重
+      MIT_weight: 1                 # MIT损失权重
+      batch_size: 32
+      epochs: 50
+      patience: 10
+
+  # ----------------- CSAI -----------------
+  - name: "CSAI"
+    type: "pypots"
+    class_name: "CSAI"
+    hyperparameters:
+      rnn_hidden_size: 128          # GRU隐藏层大小
+      imputation_weight: 1.0        # 重建损失权重
+      consistency_weight: 1.0       # 一致性损失权重
+      removal_percent: 20           # 训练中移除数据的百分比
+      increase_factor: 2.0          # 调整缺失量的缩放因子
+      step_channels: 64             # 每一步的通道数
+      batch_size: 32
+      epochs: 50
+      patience: 10
+
+  # ----------------- MOMENT -----------------
+  - name: "MOMENT"
+    type: "pypots"
+    class_name: "MOMENT"
+    hyperparameters:
+      patch_size: 8                 # Patch长度
+      patch_stride: 8               # Patch步长
+      transformer_backbone: "google/flan-t5-base" # Transformer骨干, 可选 "t5-small", "t5-base"等
+      transformer_type: "encoder_only" # Transformer类型, 可选 "encoder_only", "decoder_only"等
+      n_layers: 4                   # Transformer层数
+      d_ffn: 1024                   # 前馈网络隐藏层大小
+      d_model: 256                  # 模型骨干隐藏层大小
+      dropout: 0.1                  # dropout率
+      head_dropout: 0.1             # 模型头的dropout率
+      finetuning_mode: "end-to-end" # 微调模式: "linear-probing", "end-to-end", "zero-shot"
+      revin_affine: true            # RevIn模块中是否用仿射变换
+      add_positional_embedding: true # 是否添加位置嵌入
+      value_embedding_bias: false   # 值嵌入中是否添加偏置
+      orth_gain: 1.41               # 正交初始化的增益
+      mask_ratio: 0.4               # 掩码比例
+      batch_size: 32
+      epochs: 50
+      patience: 10
+
+  # ----------------- TSLANet -----------------
+  - name: "TSLANet"
+    type: "pypots"
+    class_name: "TSLANet"
+    hyperparameters:
+      n_layers: 3                   # TSLANet层数
+      patch_size: 16                # Patch大小
+      d_embedding: 128              # 嵌入维度
+      mask_ratio: 0.4               # 随机掩码比例
+      dropout: 0.15                 # dropout率
+      batch_size: 32
+      epochs: 50
+      patience: 10
+
+  # ----------------- TimeLLM -----------------
+  - name: "TimeLLM"
+    type: "pypots"
+    class_name: "TimeLLM"
+    hyperparameters:
+      n_layers: 2                   # TimeLLM层数
+      llm_model_type: "GPT2"        # LLM类型, 可选 "LLaMA", "GPT2", "BERT"
+      patch_size: 16                # Patch长度
+      patch_stride: 16              # Patch步长
+      d_llm: 768                    # LLM维度 (GPT2: 768, LLaMA: 4096, BERT: 768)
+      d_model: 128                  # 模型维度
+      d_ffn: 256                    # 前馈网络维度
+      n_heads: 4                    # 多头注意力头数
+      dropout: 0.1                  # dropout率
+      domain_prompt_content: "Impute the missing values in the time series." # 领域知识提示词
+      ORT_weight: 1
+      MIT_weight: 1
+      batch_size: 32
+      epochs: 5
+      patience: 1
+
+  # ----------------- GPT4TS -----------------
+  - name: "GPT4TS"
+    type: "pypots"
+    class_name: "GPT4TS"
+    hyperparameters:
+      patch_size: 16                # Patch大小
+      patch_stride: 16              # Patch步长
+      n_layers: 3                   # GPT2中的隐藏层数
+      train_gpt_mlp: true           # 是否在微调时训练GPT2的MLP
+      d_ffn: 256                    # 前馈网络隐藏层大小
+      dropout: 0.1                  # dropout率
+      embed: "timeF"                # 嵌入方法, 可选 'timeF', 'fixed', 'learned'
+      freq: "h"                     # 时间序列频率 (e.g., 's', 't', 'h', 'd', 'w', 'm')
+      batch_size: 32
+      epochs: 50
+      patience: 10
+
+  # ----------------- SegRNN -----------------
+  - name: "SegRNN"
+    type: "pypots"
+    class_name: "SegRNN"
+    hyperparameters:
+      seg_len: 20                   # RNN输入的段长度
+      d_model: 256                  # RNN单元的维度
+      dropout: 0.1                  # 输出层的dropout率
+      ORT_weight: 1
+      MIT_weight: 1
+      batch_size: 32
+      epochs: 50
+      patience: 10
+
+  # ----------------- FITS -----------------
+  - name: "FITS"
+    type: "pypots"
+    class_name: "FITS"
+    hyperparameters:
+      cut_freq: 50                  # 傅里叶变换的截止频率
+      individual: false             # 是否为每个特征使用独立的傅里叶变换
+      ORT_weight: 1
+      MIT_weight: 1
+      apply_nonstationary_norm: false # 是否应用非平稳归一化
+      batch_size: 32
+      epochs: 50
+      patience: 10
+
+  # ----------------- TimeMixerPP -----------------
+  - name: "TimeMixerPP"
+    type: "pypots"
+    class_name: "TimeMixerPP"
+    hyperparameters:
+      n_layers: 4                   # 层数
+      d_model: 128                  # 模型维度
+      d_ffn: 256                    # 前馈网络维度
+      top_k: 5                      # top_k
+      n_heads: 4                    # 多头注意力头数
+      n_kernels: 6                  # 核数量
+      dropout: 0.1                  # dropout率
+      channel_mixing: true          # 是否通道混合
+      channel_independence: true    # 是否通道独立
+      downsampling_layers: 3        # 下采样层数
+      downsampling_window: 2        # 下采样窗口大小
+      apply_nonstationary_norm: false # 是否应用非平稳归一化
+      batch_size: 32
+      epochs: 50
+      patience: 10

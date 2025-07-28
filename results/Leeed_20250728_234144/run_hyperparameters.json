@@ -1,0 +1,83 @@
+{
+    "SAITS": {
+        "n_layers": 2,
+        "d_model": 64,
+        "d_ffn": 128,
+        "n_heads": 2,
+        "d_k": 32,
+        "d_v": 32,
+        "dropout": 0.1,
+        "epochs": 10,
+        "patience": 5,
+        "n_steps": 100,
+        "n_features": 2,
+        "device": "cuda:0"
+    },
+    "Transformer": {
+        "n_layers": 3,
+        "d_model": 256,
+        "n_heads": 8,
+        "d_k": 32,
+        "d_v": 32,
+        "d_ffn": 512,
+        "dropout": 0.1,
+        "attn_dropout": 0.1,
+        "ORT_weight": 1,
+        "MIT_weight": 1,
+        "batch_size": 32,
+        "epochs": 5,
+        "patience": 1,
+        "n_steps": 100,
+        "n_features": 2,
+        "device": "cuda:0"
+    },
+    "TimeLLM": {
+        "n_layers": 2,
+        "llm_model_type": "GPT2",
+        "patch_size": 16,
+        "patch_stride": 16,
+        "d_llm": 768,
+        "d_model": 128,
+        "d_ffn": 256,
+        "n_heads": 4,
+        "dropout": 0.1,
+        "domain_prompt_content": "Impute the missing values in the time series.",
+        "ORT_weight": 1,
+        "MIT_weight": 1,
+        "batch_size": 32,
+        "epochs": 5,
+        "patience": 1,
+        "n_steps": 100,
+        "n_features": 2,
+        "device": "cuda:0"
+    },
+    "BRITS": {
+        "rnn_hidden_size": 64,
+        "epochs": 10,
+        "patience": 5,
+        "n_steps": 100,
+        "n_features": 2,
+        "device": "cuda:0"
+    },
+    "SegRNN": {
+        "seg_len": 20,
+        "d_model": 256,
+        "dropout": 0.1,
+        "ORT_weight": 1,
+        "MIT_weight": 1,
+        "batch_size": 32,
+        "epochs": 50,
+        "patience": 10,
+        "n_steps": 100,
+        "n_features": 2,
+        "device": "cuda:0"
+    },
+    "MyLSTM": {
+        "hidden_dim": 64,
+        "n_layers": 2,
+        "lr": 0.001,
+        "epochs": 50,
+        "n_steps": 100,
+        "n_features": 2
+    }
+}
