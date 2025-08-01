@@ -8,9 +8,10 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import torch
+import gc
 
 from data_handler.loader import load_and_preprocess_data
-from data_handler.missing_creator import create_missingness
+from data_handler.loader import get_missing_data
 from models.pypots_wrappers import PyPOTSWrapper
 from models.custom_models.my_lstm_imputer import MyLSTMImputer
 from evaluation.metrics import calculate_metrics
@@ -109,7 +110,7 @@ class ExperimentRunner:
         feature_names = self.config['data'].get('feature_columns', [f"Feature_{i+1}" for i in range(final_n_features)])
 
         self.logger.info("Step 2: Creating missing values in the test set...")
-        test_data_missing = create_missingness(test_data_complete, self.config)
+        train_data_missing_for_fit, test_data_missing, _ = get_missing_data(train_data_complete, test_data_complete, self.config)
 
         metrics_summary = []
         all_imputed_results_orig_scale = {} # 存储原始量纲的插补结果
@@ -120,6 +121,7 @@ class ExperimentRunner:
         plot_settings = self.config['evaluation'].get('plot_settings', {})
 
         for model_name in self.config['models_to_run']:
+            model = None
             self.logger.info(f"--- Processing model: {model_name} ---")
 
             try:
@@ -155,7 +157,6 @@ class ExperimentRunner:
                 else:
                     if should_load:
                         self.logger.info(f"No existing model file found at {model_save_path}. Training a new one.")
-                    train_data_missing_for_fit = create_missingness(train_data_complete, self.config)
                     self.logger.info(f"Fitting {model_name}...")
                     start_time = time.time()
                     model.fit(train_data_missing_for_fit)
@@ -224,6 +225,16 @@ class ExperimentRunner:
             except Exception as e:
                 self.logger.error(f"An error occurred while processing model '{model_name}'. Skipping to the next one.", exc_info=True)
                 continue
+            
+            finally:
+                # --- 【关键修改】无论成功或失败，都在循环结束时执行大扫除 ---
+                if model is not None:
+                    self.logger.info(f"Cleaning up resources for model '{model_name}'...")
+                    del model
+                    if torch.cuda.is_available():
+                        torch.cuda.empty_cache()
+                    gc.collect()
+                    self.logger.info("Cleanup complete.")
 
         # ... (后续的汇总绘图逻辑无变化，因为它现在使用的是原始量纲的数据) ...
         self.logger.info("--- All models processed. Finalizing results. ---")

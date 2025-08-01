@@ -12,36 +12,100 @@ global_settings:
 
 # 任务列表 (程序将按顺序执行以下所有任务)
 tasks:
-  - experiment_name: "SAITS-35000"
+  - experiment_name: "Three_fast_models"
     settings:
       random_seed: 2025
       device: "cuda:0"
       load_if_exists: true
     data:
       path: "data/masked_data.csv"
-      marked_path: "data/MCAR10_masked_data.csv"
       datetime_column: null      # 如果有时间列，请指定列名
-      feature_columns: ["Temp"]      # 留空以使用所有列
+      feature_columns: ["original"]      # 留空以使用所有列
       test_size: 0.2
       n_steps: 96 #满足 MOMENT (要求被8整除) 和 TimeMixerPP (要求被8整除)
       n_features: 2
     missingness:
       pattern: "point"
-      rate: 0.8
+      rate: 0.1
 
-    models_to_run: ["SAITS"]
+    models_to_run: ["SAITS", "Transformer", "BRITS"]
     #models_to_run: ["MOMENT", "CSAI"] 
     #models_to_run: ["SAITS"]
 
     evaluation:
       metrics: ["mae", "mse", "mre"]
-      plot_annotation: ["epochs", "d_model", "lr", "d_time_embedding", "d_feature_embedding", "d_diffusion_embedding", "n_diffusion_steps"]
+      plot_annotation: ["epochs", "d_model", "lr"]
       # ⬇️ ========== 新增：图表显示设置 ========== ⬇️
       plot_settings:
         x_label: "Time Step (Hours)"
         y_label: "Temp"
         y_unit: "°C"
       # ⬆️ ======================================== ⬆️
+
+
+
+  - experiment_name: "Five_Middle_models"
+    settings:
+      random_seed: 2025
+      device: "cuda:0"
+      load_if_exists: true # <-- 新增：设置为true来启用加载功能
+    data:
+      path: "data/masked_data.csv"
+      datetime_column: null      # 如果有时间列，请指定列名
+      feature_columns: ["original"]      # 留空以使用所有列
+      test_size: 0.2
+      n_steps: 96 #满足 MOMENT (要求被8整除) 和 TimeMixerPP (要求被8整除)
+      n_features: 2
+    missingness:
+      pattern: "point"
+      rate: 0.1
+
+    models_to_run: ["TEFN", "TimeLLM", "SegRNN", "MyLSTM", "GPT4TS"]
+    #models_to_run: ["MOMENT", "CSAI"] 
+    #models_to_run: ["SAITS"]
+
+    evaluation:
+      metrics: ["mae", "mse", "mre"]
+      plot_annotation: ["epochs", "d_model", "lr"]
+      # ⬇️ ========== 新增：图表显示设置 ========== ⬇️
+      plot_settings:
+        x_label: "Time Step (Hours)"
+        y_label: "Temp"
+        y_unit: "°C"
+      # ⬆️ ======================================== ⬆️
+
+
+
+  - experiment_name: "Two_Big_models"
+    settings:
+      random_seed: 2025
+      device: "cuda:0"
+      load_if_exists: true # <-- 新增：设置为true来启用加载功能
+    data:
+      path: "data/masked_data.csv"
+      datetime_column: null      # 如果有时间列，请指定列名
+      feature_columns: ["original"]      # 留空以使用所有列
+      test_size: 0.2
+      n_steps: 96 #满足 MOMENT (要求被8整除) 和 TimeMixerPP (要求被8整除)
+      n_features: 2
+    missingness:
+      pattern: "point"
+      rate: 0.1
+
+    models_to_run: ["TSLANet", "TimeMixerPP"]
+    #models_to_run: ["MOMENT", "CSAI"] 
+    #models_to_run: ["SAITS"]
+
+    evaluation:
+      metrics: ["mae", "mse", "mre"]
+      plot_annotation: ["epochs", "d_model", "lr"]
+      # ⬇️ ========== 新增：图表显示设置 ========== ⬇️
+      plot_settings:
+        x_label: "Time Step (Hours)"
+        y_label: "Temp"
+        y_unit: "°C"
+      # ⬆️ ======================================== ⬆️
+
 
 
 
@@ -75,14 +139,14 @@ model_definitions:
       d_k: 32
       d_v: 32
       dropout: 0.1
-      epochs: 35000
+      epochs: 350
       patience: 50
 
   - name: "BRITS"
     type: "pypots"
     class_name: "BRITS"
     hyperparameters:
-      rnn_hidden_size: 128
+      rnn_hidden_size: 64
       epochs: 350
       patience: 50
 
@@ -244,22 +308,6 @@ model_definitions:
       epochs: 200
       patience: 50
 
-  # ⬇️ ========== 新增：CSDI 模型定义 ========== ⬇️
-  - name: "CSDI"
-    type: "pypots"
-    class_name: "CSDI"
-    hyperparameters:
-      n_layers: 3
-      n_heads: 8
-      n_channels: 128
-      d_time_embedding: 128
-      d_feature_embedding: 128
-      d_diffusion_embedding: 128
-      n_diffusion_steps: 500
-      epochs: 220
-      patience: 20
-      batch_size: 64
-  # ⬆️ ======================================== ⬆️
 
 #  - experiment_name: "Fort_Middle_models"
 #    settings:
